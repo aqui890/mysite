@@ -1,2 +1,2 @@
-# mysitr
+# mysite
 spring boot first project
