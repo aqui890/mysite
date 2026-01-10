@@ -1,0 +1,32 @@
+<html layout:decorate="~{layout}">
+	<div class="container" layout:fragment="content">
+		<link rel="stylesheet" th:href="@{/style.css}" />
+		<div class="row">
+			<div class="col">
+				<h1 th:text="${question.subject}" style="margin-top: 30px;">제목</h1>
+				<div th:text="${question.content}" style="margin-bottom: 200px;">내용</div>
+				<p style="font-weight: bold; font-size: 1.6rem;">답변</p>
+				<table class="table">
+				  <thead>
+				    <tr>
+				      <th scope="col">번호</th>
+				      <th scope="col">제목</th>
+				      <th scope="col">작성일자</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr th:each="answer, loop : ${question.answerList}">
+				      <td>[[${loop.count}]]</td>
+				      <td>[[${answer.content}]]</td>
+				      <td th:text="${#temporals.format(answer.createDate, 'yyyy년 MM월 dd일')}"></td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+		<form th:action="@{|/answer/create/${question.id}|}" method="post" style="margin-top: 30px;">
+			<textarea name="content" id="" cols="30" rows="10" style="resize: none; margin-bottom: 30px;"></textarea>
+			<button type="submit">답변 등록</button>
+		</form>
+	</div>
+</html>
