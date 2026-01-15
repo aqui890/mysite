@@ -26,22 +26,17 @@ class MyspringApplicationTests {
 	@Autowired
 	private AnswerRepository answerRepository;
 	
-	@Transactional
+	
 	@Test
 	void contextLoads() {
 		/*
-		Question q1 = new Question();
-		q1.setSubject("궁금합니다.");
-		q1.setContent("질문 내용입니다.");
-		q1.setCreateDate(LocalDateTime.now());
-		this.questionRepository.save(q1);
+		 * int cnt = 100;
+		 * 
+		 * for(int i = 1; i <= 100; i++) { Question q1 = new Question();
+		 * q1.setSubject("제목" + cnt); q1.setContent("내용" + cnt);
+		 * q1.setCreateDate(LocalDateTime.now()); this.questionRepository.save(q1); }
+		 */
 		
-		Question q2 = new Question();
-		q2.setSubject("사실인가요?");
-		q2.setContent("공룡이 존재 했다는 사실이 진정 true 입니까?");
-		q2.setCreateDate(LocalDateTime.now());
-		this.questionRepository.save(q2);
-		*/
 		
 		/*
 		List<Question> all = this.questionRepository.findAll();
@@ -86,7 +81,7 @@ class MyspringApplicationTests {
 		
 		
 		/*
-		int cnt = 1;
+		int cnt = 100;
 		
 		
 		for(int i = 1; i <= 50; i++) {			
@@ -99,14 +94,15 @@ class MyspringApplicationTests {
 		}
 		*/
 		
-		Optional<Question> op = this.questionRepository.findById(4);
-		assertTrue(op.isPresent());
-		Question q = op.get();
-		
-		List<Answer> answerList = q.getAnswerList();  // 쌤 방법
-		
-		System.out.println(answerList.get(0).getContent());
-		System.out.println(answerList.size());
+		/*
+		 * Optional<Question> op = this.questionRepository.findById(4);
+		 * assertTrue(op.isPresent()); Question q = op.get();
+		 * 
+		 * List<Answer> answerList = q.getAnswerList(); // 쌤 방법
+		 * 
+		 * System.out.println(answerList.get(0).getContent());
+		 * System.out.println(answerList.size());
+		 */
 		
 		/*
 		 * 내방법

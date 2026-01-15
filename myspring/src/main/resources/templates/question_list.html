@@ -4,7 +4,7 @@
 		<div class="col">
 			<div class="jumbotron" style="margin: 30px 0;">
 				<h1>질문목록</h1>
-				<a th:href="@{/question/create}" class="btn btn-primary">질문 등록하기</a>
+				<a th:href="@{/question/regist}" class="btn btn-primary">질문 등록하기</a>
 			</div>
 			<table class="table table table-striped">
 			  <thead>
@@ -15,13 +15,32 @@
 			    </tr>
 			  </thead>
 			  <tbody>
-			    <tr th:each="question, loop : ${questionList}">
+			    <tr th:each="question, loop : ${paging}">
 			      <td>[[${loop.count}]]</td>
 			      <td><a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a></td>
 			      <td th:text="${#temporals.format(question.createDate, 'yyyy년 MM월 dd일')}"></td>
 			    </tr>
 			  </tbody>
 			</table>
+			<!-- s: paging -->
+			<div class="wrap w-100 d-flex justify-content-center align-items-center">				
+				<nav aria-label="Page navigation example" th:if="${!paging.isEmpty()}">
+				  	<ul class="pagination">
+				    	<li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+				     		<a class="page-link" th:href="@{|?page=${paging.number - 1}|}" aria-label="Previous">
+				        		<span aria-hidden="true">&laquo;</span>
+				      		</a>
+				    	</li>
+				    	<li class="page-item" th:each="page : ${#numbers.sequence(0, paging.totalPages - 1)}" th:classappend="${paging.number == page} ? 'active'" th:if="${page >= paging.number - 2 and page <= paging.number + 2}"><a class="page-link" th:href="@{|?page=${page}|}">[[${page}]]</a></li>
+					    <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+					      	<a class="page-link" th:href="@{|?page=${paging.number + 1}|}" aria-label="Next">
+					        	<span aria-hidden="true">&raquo;</span>
+					      	</a>
+					    </li>
+				  	</ul>
+				</nav>
+			</div>
+			<!-- e: paging -->
 		</div>
 	</div>
 </html>

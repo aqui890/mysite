@@ -1,0 +1,16 @@
+<html layout:decorate="~{layout}">
+	<div class="container" layout:fragment="content" style="padding-top: 30px;">	
+		<form th:action="@{|/question/create|}" method="post" th:object="${questionForm}">
+			<div th:replace="~{form_errors :: formErrorsFragment}"></div>
+		  	<div class="mb-3">
+		    	<label for="subject" class="form-label">Question Title</label>
+		    	<input type="text" class="form-control" th:field="*{subject}">
+		  	</div>
+		  	<div class="mb-3">
+		    	<label for="content" class="form-label">Question Content</label>
+		    	<textarea type="text" class="form-control" th:field="*{content}" style="resize: none;"></textarea>
+		  	</div>
+		  	<button type="submit" class="btn btn-primary">Save</button>
+		</form>
+	</div>
+</html>

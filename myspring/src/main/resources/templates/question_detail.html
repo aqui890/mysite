@@ -24,8 +24,10 @@
 				</table>
 			</div>
 		</div>
-		<form th:action="@{|/answer/create/${question.id}|}" method="post" style="margin-top: 30px;">
-			<textarea name="content" id="" cols="30" rows="10" style="resize: none; margin-bottom: 30px;"></textarea>
+		
+		<form th:action="@{|/answer/create/${question.id}|}" method="post" style="margin-top: 30px;" th:object="${answerForm}">
+			<div th:replace="~{form_errors :: formErrorsFragment}"></div>
+			<textarea th:field="*{content}" cols="30" rows="10" style="resize: none; margin-bottom: 30px;"></textarea>
 			<button type="submit">답변 등록</button>
 		</form>
 	</div>
