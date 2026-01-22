@@ -1,6 +1,7 @@
 <html layout:decorate="~{layout}">
 	<div class="container" layout:fragment="content" style="padding-top: 30px;">	
-		<form th:action="@{|/question/create|}" method="post" th:object="${questionForm}">
+		<form method="post" th:object="${questionForm}">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 			<div th:replace="~{form_errors :: formErrorsFragment}"></div>
 		  	<div class="mb-3">
 		    	<label for="subject" class="form-label">Question Title</label>

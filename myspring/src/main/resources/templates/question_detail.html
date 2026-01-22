@@ -4,13 +4,17 @@
 		<div class="row">
 			<div class="col">
 				<h1 th:text="${question.subject}" style="margin-top: 30px;">제목</h1>
+				<p class="text-secondary">글쓴이: [[${question.author.username}]]</p>
 				<div th:text="${question.content}" style="margin-bottom: 200px;">내용</div>
+				<a th:href="@{|/question/modify/${question.id}|}" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" class="btn btn-outline-primary">수정</a>
+				<a href="javascript:void(0);" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" th:class="'btn btn-outline-danger delete'" th:data-uri="@{|/question/delete/${question.id}|}">삭제</a>
 				<p style="font-weight: bold; font-size: 1.6rem;">답변</p>
 				<table class="table">
 				  <thead>
 				    <tr>
 				      <th scope="col">번호</th>
 				      <th scope="col">제목</th>
+					  <th scope="col">작성자</th>
 				      <th scope="col">작성일자</th>
 				    </tr>
 				  </thead>
@@ -18,7 +22,10 @@
 				    <tr th:each="answer, loop : ${question.answerList}">
 				      <td>[[${loop.count}]]</td>
 				      <td>[[${answer.content}]]</td>
+					  <td>[[${answer.author.username}]]</td>
 				      <td th:text="${#temporals.format(answer.createDate, 'yyyy년 MM월 dd일')}"></td>
+					  <td><a th:href="@{|/answer/modify/${answer.id}/${question.id}|}" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" class="btn btn-outline-primary">수정</a></td>
+					  <td><a href="javascript:void(0);" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" th:class="'btn btn-outline-danger answer-delete'" th:data-uri="@{|/answer/delete/${answer.id}/${question.id}|}">삭제</a></td>
 				    </tr>
 				  </tbody>
 				</table>
@@ -27,8 +34,24 @@
 		
 		<form th:action="@{|/answer/create/${question.id}|}" method="post" style="margin-top: 30px;" th:object="${answerForm}">
 			<div th:replace="~{form_errors :: formErrorsFragment}"></div>
-			<textarea th:field="*{content}" cols="30" rows="10" style="resize: none; margin-bottom: 30px;"></textarea>
+			<textarea th:field="*{content}" cols="30" rows="10" style="resize: none; margin-bottom: 30px;" sec:authorize="isAnonymous()" disabled placeholder="로그인 후 사용 가능합니다."></textarea>
+			<textarea th:field="*{content}" cols="30" rows="10" style="resize: none; margin-bottom: 30px;" sec:authorize="isAuthenticated()"></textarea>
 			<button type="submit">답변 등록</button>
 		</form>
 	</div>
+	<script layout:fragment="script">
+		const dElement = document.querySelector(".delete");
+		const adElement = document.querySelector(".answer-delete");
+		dElement.addEventListener("click", e => {
+			if(confirm("정말로 삭제하시겠습니까?")) {
+				location.href = e.target.dataset.uri;
+			}
+		})
+		
+		adElement.addEventListener("click", e => {
+			if(confirm("정말로 삭제하시겠습니까?")) {
+				location.href = e.target.dataset.uri;
+			}
+		})
+	</script>
 </html>
