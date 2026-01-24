@@ -5,9 +5,12 @@
 			<div class="col">
 				<h1 th:text="${question.subject}" style="margin-top: 30px;">제목</h1>
 				<p class="text-secondary">글쓴이: [[${question.author.username}]]</p>
+				<p class="text-secondary">작성일자: [[${#temporals.format(question.createDate, 'yyyy년 MM월 dd일 HH시 mm분')}]]</p>
+				<p class="text-secondary" th:if="${question.modifyDate != null}">수정일자: [[${#temporals.format(question.modifyDate, 'yyyy년 MM월 dd일 HH시 mm분')}]]</p>
 				<div th:text="${question.content}" style="margin-bottom: 200px;">내용</div>
 				<a th:href="@{|/question/modify/${question.id}|}" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" class="btn btn-outline-primary">수정</a>
 				<a href="javascript:void(0);" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" th:class="'btn btn-outline-danger delete'" th:data-uri="@{|/question/delete/${question.id}|}">삭제</a>
+				<a href="javascript:void(0);" class="recommend" th:data-uri="@{|/question/vote/${question.id}|}" th:data-voted="${question.voter.contains(siteUser)}"><i class="fa-regular fa-heart"></i><span class="badge rounded-pill text-bg-danger">[[${#lists.size(question.voter)}]]</span></a>
 				<p style="font-weight: bold; font-size: 1.6rem;">답변</p>
 				<table class="table">
 				  <thead>
@@ -20,12 +23,14 @@
 				  </thead>
 				  <tbody>
 				    <tr th:each="answer, loop : ${question.answerList}">
+						<a th:id="|answer_${answer.id}|">	</a>
 				      <td>[[${loop.count}]]</td>
 				      <td>[[${answer.content}]]</td>
 					  <td>[[${answer.author.username}]]</td>
 				      <td th:text="${#temporals.format(answer.createDate, 'yyyy년 MM월 dd일')}"></td>
-					  <td><a th:href="@{|/answer/modify/${answer.id}/${question.id}|}" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" class="btn btn-outline-primary">수정</a></td>
-					  <td><a href="javascript:void(0);" sec:authorize="isAuthenticated()" th:if="${question.author != null and #authentication.getPrincipal().getUsername() == question.author.username}" th:class="'btn btn-outline-danger answer-delete'" th:data-uri="@{|/answer/delete/${answer.id}/${question.id}|}">삭제</a></td>
+					  <td><a th:href="@{|/answer/modify/${answer.id}/${question.id}|}" sec:authorize="isAuthenticated()" th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}" class="btn btn-outline-primary">수정</a></td>
+					  <td><a href="javascript:void(0);" sec:authorize="isAuthenticated()" th:if="${answer.author != null and #authentication.getPrincipal().getUsername() == answer.author.username}" th:class="'btn btn-outline-danger delete'" th:data-uri="@{|/answer/delete/${answer.id}/${question.id}|}">삭제</a></td>
+					  <td><a href="javascript:void(0);" class="answer-recommend" th:data-uri="@{|/answer/vote/${answer.id}|}"><i class="fa-regular fa-heart" style="z-index: 3;"></i><span class="badge rounded-pill text-bg-danger">[[${#lists.size(answer.voter)}]]</span></a></td>
 				    </tr>
 				  </tbody>
 				</table>
@@ -40,18 +45,33 @@
 		</form>
 	</div>
 	<script layout:fragment="script">
-		const dElement = document.querySelector(".delete");
-		const adElement = document.querySelector(".answer-delete");
-		dElement.addEventListener("click", e => {
-			if(confirm("정말로 삭제하시겠습니까?")) {
-				location.href = e.target.dataset.uri;
+		const dElement = document.querySelectorAll(".delete");
+		const recommendElements = document.querySelector(".recommend");
+		const arecommendElements = document.querySelectorAll(".answer-recommend");
+		dElement.forEach(item => {			
+			item.addEventListener("click", e => {
+				if(confirm("정말로 삭제하시겠습니까?")) {
+					location.href = e.target.dataset.uri;
+				}
+			})
+		})
+		
+		recommendElements.addEventListener("click", e => {
+			const isVoted = e.currentTarget.dataset.voted === "true";
+			
+			const msg = isVoted ? "추천을 취소하시겠습니까?" : "정말로 추천하시겠습니까?";
+			
+			if(confirm(msg)) {
+				location.href = e.currentTarget.dataset.uri;
 			}
 		})
 		
-		adElement.addEventListener("click", e => {
-			if(confirm("정말로 삭제하시겠습니까?")) {
-				location.href = e.target.dataset.uri;
-			}
+		arecommendElements.forEach(item => {
+			item.addEventListener("click", e => {
+				if(confirm("정말로 이 답변을 추천하시겠습니까?")) {
+					location.href = e.currentTarget.dataset.uri;
+				}
+			})
 		})
 	</script>
 </html>

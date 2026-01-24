@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
-
+import com.example.simpleBoard.H2Config;
 import com.example.simpleBoard.question.Question;
 import com.example.simpleBoard.question.QuestionForm;
 import com.example.simpleBoard.question.QuestionService;
@@ -44,8 +44,9 @@ public class AnswerController {
 			model.addAttribute("question", q);
 			return "question_detail";
 		}
+		Answer answer = this.answerService.create(question, answerForm.getContent(), siteUser);
 		this.answerService.create(question, answerForm.getContent(), siteUser);
-		return "redirect:/question/detail/" + id;
+		return String.format("redirect:/question/detail/%s#answer_%s", id, answer.getId());
 	}
 	
 	@PreAuthorize("isAuthenticated()")
@@ -55,6 +56,7 @@ public class AnswerController {
 		if(!answer.getAuthor().getUsername().equals(principal.getName())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정 권한이 없습니다.");
 		}
+
 		answerform.setContent(answer.getContent());
 		
 		return "answer_form";
@@ -74,7 +76,7 @@ public class AnswerController {
 		this.answerService.modify(answer, answerform.getContent());
 		
 		
-		return String.format("redirect:/question/detail/%s", q);
+		return String.format("redirect:/question/detail/%s#answer_%s", q, id);
 	}
 	
 	@GetMapping("/delete/{id}/{q}")
@@ -83,5 +85,16 @@ public class AnswerController {
 		return String.format("redirect:/question/detail/%s", q);
 	}
 	
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/vote/{id}")
+	public String answerVote(Principal principal, @PathVariable("id") Integer id) {
+		Answer answer = this.answerService.getAnswer(id);
+		
+		SiteUser siteUser = this.userService.getUser(principal.getName());
+		
+		this.answerService.vote(answer, siteUser);
+		
+		return String.format("redirect:/question/detail/%s#answer_%s", answer.getQuestion().getId(), id);
+	}
 	
 }
