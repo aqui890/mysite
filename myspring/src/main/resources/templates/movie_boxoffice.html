@@ -1,0 +1,84 @@
+<html layout:decorate="~{layout}">
+	<div class="container" layout:fragment="content">
+		<div class="title-wrap" style="margin-top: 30px;">			
+			<h1 class="title" style="font-size: 1.6rem; font-weight: bold;">일별 영화 박스 오피스</h1>
+		</div>
+		<table class="table table-striped">
+		  <thead>
+			<tr>
+				<th scope="col" style="text-align: center;">박스오피스 순위</th>
+				<th scope="col" style="text-align: center;">영화명</th>
+				<th scope="col" style="text-align: center;">영화 포스터</th>
+				<th scope="col" style="text-align: center;">개봉일</th>
+				<th scope="col" style="text-align: center;">누적 관객수</th>
+				<th scope="col" style="text-align: center;">누적 매출액</th>
+			</tr>
+		  </thead>
+		  <tbody class="table-body">
+				<tr>
+					<td style="text-align: center;">test</td>
+					<td style="text-align: center;">test</td>
+					<td style="text-align: center;">test</td>
+					<td style="text-align: center;">test</td>
+					<td style="text-align: center;">test</td>
+					<td style="text-align: center;">test</td>
+				</tr>
+		  </tbody>
+		</table>
+	</div>
+	
+	<script layout:fragment="script">
+	
+		$(function () {
+			
+			const getDay = () => {
+				const date = new Date();
+				let yyyy = date.getFullYear();
+				let mm = date.getMonth() + 1;
+				let dd = date.getDate() - 1;
+				
+				if(mm < 10) mm = "0" + mm;
+				if(dd < 10) dd = "0" + dd;
+				
+				return String(yyyy + mm + dd);
+			}
+			
+			const getJSON = (targetDate) => {
+				$.ajax({
+					type: "get",
+					url: "/api/boxoffice",
+					data: {targetDate: targetDate},
+					dataType: "json",
+					success: function(data) {
+						console.log("통신 성공");
+						console.log(`전체 데이터`, data);
+						const list = data.boxOfficeResult.dailyBoxOfficeList;
+						document.querySelector(".table-body").innerHTML = '';
+						for(let i = 0; i < list.length; i++) {							
+							document.querySelector(".table-body").insertAdjacentHTML("beforeend",
+								`
+								<tr>
+									<td style="text-align: center;">${list[i].rank}</td>
+									<td style="text-align: center;">${list[i].movieNm}</td>
+									<td style="text-align: center;">${list[i].movieCd}</td>
+									<td style="text-align: center;">${list[i].openDt}</td>
+									<td style="text-align: center;">${Number(list[i].audiAcc).toLocaleString()}명</td>
+									<td style="text-align: center;">${Number(list[i].salesAcc).toLocaleString()}원</td>
+								</tr>
+								`
+							)
+						}
+					},
+					error: function() {
+						console.log("통신 실패");
+					}
+				})
+			}
+			console.log("ajax start");
+			const today = getDay();
+			console.log(`요청 날짜: ${today}`);
+			getJSON(today);
+			
+		})
+	</script>
+</html>

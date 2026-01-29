@@ -3,7 +3,7 @@
 		<h1 style="margin: 30px 0;" class="fw-bold">Regist</h1>
 		<div class="row">
 			<div class="col">
-				<form th:object="${userCreateForm}" method="post" th:action="@{/user/signup}">
+				<form th:object="${userCreateForm}" method="post" th:action="@{/user/signup}" enctype="multipart/form-data">
 					<div th:replace="~{form_errors::formErrorsFragment}"></div>
 				  	<div class="mb-3">
 				    	<label for="username" class="form-label fw-bold">User Name</label>
@@ -20,7 +20,11 @@
 				  	<div class="mb-3">
 				    	<label for="email" class="form-label fw-bold">Email</label>
 				    	<input type="email" class="form-control" th:field="*{email}" placeholder="Email">
-				  	</div>			  
+				  	</div>
+					<div class="mb-3">
+						<label for="imageUrl" class="form-label fw-bold">Profile</label>
+						<input type="file" class="form-control" name="imageFile" id="imageUrl" placeholder="Profile">
+					</div>
 				  	<button type="submit" class="btn btn-primary">Regist</button>
 				</form>
 			</div>
